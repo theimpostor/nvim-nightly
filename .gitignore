@@ -1,0 +1,5 @@
+nvim.appimage
+.cache/
+.local
+.config/configstore/update-notifier-npm.json
+.config/github-copilot
