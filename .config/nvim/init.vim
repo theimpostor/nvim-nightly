@@ -15,19 +15,14 @@ let programming_filetypes = [
 
 call plug#begin(stdpath('data') . '/plugged')
 Plug 'AndrewRadev/linediff.vim'
-" Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh', 'for': programming_filetypes,  }
 Plug 'cespare/vim-toml'
 Plug 'dense-analysis/ale', { 'for': programming_filetypes, }
 Plug 'editorconfig/editorconfig-vim'
 Plug 'elzr/vim-json'
 Plug 'github/copilot.vim'
-" Plug 'inkarkat/vcscommand.vim'
 " Plug 'inkarkat/vim-ingo-library'
 " Plug 'inkarkat/vim-mark'
-" Plug 'jackguo380/vim-lsp-cxx-highlight', { 'for': programming_filetypes, }
-" use fzf from path
-" Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'majutsushi/tagbar'
 Plug 'mileszs/ack.vim'
 Plug 'neovim/nvim-lspconfig'
@@ -38,13 +33,13 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'vim-airline/vim-airline'
-" Plug 'zxqfl/tabnine-vim', { 'for': programming_filetypes + [ 'text', 'markdown', 'conf' ], }
 call plug#end()
 
 " neovim lsp config
 " full list here: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 lua << EOF
 require'lspconfig'.bashls.setup{}
+require'lspconfig'.cssls.setup{}
 require'lspconfig'.gopls.setup{}
 require'lspconfig'.html.setup{}
 require'lspconfig'.tsserver.setup{
@@ -57,7 +52,7 @@ require'lspconfig'.tsserver.setup{
 require'lspconfig'.vimls.setup{}
 EOF
 
-" TODO: configure bindings in on_attach: https://blog.inkdrop.app/how-to-set-up-neovim-0-5-modern-plugins-lsp-treesitter-etc-542c3d9c9887
+" TODO: configure bindings in on_attach
 " nnoremap <buffer> <silent> <C-]>      :call LanguageClient#textDocument_definition()<CR>
 " nnoremap <buffer> <silent> <C-w><C-]> :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
 nnoremap <silent> <C-]>      <cmd>lua vim.lsp.buf.definition()<CR>
