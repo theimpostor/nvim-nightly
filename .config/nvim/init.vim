@@ -20,6 +20,8 @@ Plug 'cespare/vim-toml'
 Plug 'dense-analysis/ale', { 'for': programming_filetypes, }
 Plug 'editorconfig/editorconfig-vim'
 Plug 'elzr/vim-json'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/nvim-cmp'
 Plug 'inkarkat/vcscommand.vim'
 Plug 'inkarkat/vim-ingo-library'
 Plug 'inkarkat/vim-mark'
@@ -33,9 +35,8 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
-Plug 'hrsh7th/nvim-cmp'
-Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'tpope/vim-unimpaired'
+Plug 'tzachar/cmp-tabnine', { 'do': './install.sh' }
 Plug 'vim-airline/vim-airline'
 call plug#end()
 
@@ -162,6 +163,7 @@ cmp.setup {
   },
   sources = {
     { name = 'nvim_lsp' },
+    { name = 'cmp_tabnine' },
   },
 }
 EOF
