@@ -33,11 +33,12 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'tpope/vim-unimpaired'
 Plug 'vim-airline/vim-airline'
 call plug#end()
 
-" set background=light
 if $COLORTERM=='truecolor'
     set termguicolors
 endif
@@ -56,8 +57,8 @@ local on_attach = function(client, bufnr)
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
-    -- Enable completion triggered by <c-x><c-o>
-  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+  -- Enable completion triggered by <c-x><c-o>
+  -- buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
   -- Mappings.
   local opts = { noremap=true, silent=true }
@@ -82,15 +83,21 @@ local on_attach = function(client, bufnr)
   vim.api.nvim_command [[autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()]]
 end
 
+-- Add additional capabilities supported by nvim-cmp
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
+
 local servers = { 'bashls', 'clangd', 'cmake', 'cssls', 'dockerls', 'gopls', 'html', 'jsonls', 'perlls', 'vimls', 'yamlls' }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup {
     on_attach = on_attach,
+    capabilities = capabilities,
   }
 end
 nvim_lsp.tsserver.setup{
     init_options = {
         on_attach = on_attach,
+        capabilities = capabilities,
         preferences = {
             disableSuggestions = true
         }
@@ -129,6 +136,33 @@ require'nvim-treesitter.configs'.setup {
       node_decremental = '<S-TAB>',
     }
   }
+}
+
+-- Set completeopt to have a better completion experience
+vim.o.completeopt = 'menuone,noselect'
+
+-- nvim-cmp setup
+local cmp = require 'cmp'
+cmp.setup {
+  mapping = {
+    ['<Tab>'] = function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      else
+        fallback()
+      end
+    end,
+    ['<S-Tab>'] = function(fallback)
+      if cmp.visible() then
+        cmp.select_prev_item()
+      else
+        fallback()
+      end
+    end,
+  },
+  sources = {
+    { name = 'nvim_lsp' },
+  },
 }
 EOF
 
