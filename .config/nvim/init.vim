@@ -42,74 +42,70 @@ if $COLORTERM=='truecolor'
     set termguicolors
 endif
 
+" undo nvim default behavior change
+nnoremap Y Y
+
 " neovim lsp config
 " full list here: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 lua << EOF
 local nvim_lsp = require('lspconfig')
-nvim_lsp.bashls.setup{}
-nvim_lsp.clangd.setup{}
-nvim_lsp.cmake.setup{}
-nvim_lsp.cssls.setup{}
-nvim_lsp.dockerls.setup{}
-nvim_lsp.gopls.setup{}
-nvim_lsp.html.setup{}
-nvim_lsp.jsonls.setup{}
-nvim_lsp.perlls.setup{}
+
+-- Use an on_attach function to only map the following keys
+-- after the language server attaches to the current buffer
+local on_attach = function(client, bufnr)
+  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+    -- Enable completion triggered by <c-x><c-o>
+  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+  -- Mappings.
+  local opts = { noremap=true, silent=true }
+
+  -- See `:help vim.lsp.*` for documentation on any of the below functions
+  buf_set_keymap('n', '<C-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_set_keymap('n', '<Leader>rw', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  buf_set_keymap('n', '<Leader>rf', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  buf_set_keymap('n', 'H', '<cmd>lua vim.lsp.buf.document_highlight()<CR>', opts)
+  buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  buf_set_keymap('n', '<C-p>', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+  buf_set_keymap('n', '<C-n>', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+
+  buf_set_option('formatexpr', 'v:lua.vim.lsp.formatexpr()')
+  buf_set_keymap('n', '<Leader>=', 'gqq', opts)
+  buf_set_keymap('x', '<leader>f', 'gq', opts)
+  buf_set_keymap('n', '<Leader>F', 'mfvi}gq`f', opts)
+
+  vim.api.nvim_set_option('updatetime', 1000)
+  vim.api.nvim_command [[autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()]]
+  vim.api.nvim_command [[autocmd CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()]]
+  vim.api.nvim_command [[autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()]]
+end
+
+local servers = { 'bashls', 'clangd', 'cmake', 'cssls', 'dockerls', 'gopls', 'html', 'jsonls', 'perlls', 'vimls', 'yamlls' }
+for _, lsp in ipairs(servers) do
+  nvim_lsp[lsp].setup {
+    on_attach = on_attach,
+  }
+end
 nvim_lsp.tsserver.setup{
     init_options = {
+        on_attach = on_attach,
         preferences = {
             disableSuggestions = true
         }
     }
 }
-nvim_lsp.vimls.setup{}
-nvim_lsp.yamlls.setup{}
 
+-- lsp use location list instead of quickfix list
 local on_references = vim.lsp.handlers["textDocument/references"]
 vim.lsp.handlers["textDocument/references"] = vim.lsp.with(
     on_references, {
-        -- Use location list instead of quickfix list
         loclist = true,
     }
 )
-EOF
 
-" TODO: configure bindings in on_attach
-" nnoremap <buffer> <silent> <C-]>      :call LanguageClient#textDocument_definition()<CR>
-" nnoremap <buffer> <silent> <C-w><C-]> :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
-nnoremap <silent> <C-]>      <cmd>lua vim.lsp.buf.definition()<CR>
-
-" nnoremap <buffer> <silent> <Leader>rw :call LanguageClient#textDocument_rename()<CR>
-nnoremap <silent> <Leader>rw <cmd>lua vim.lsp.buf.rename()<CR>
-
-" nnoremap <buffer> <silent> <Leader>rf :call LanguageClient#textDocument_references({'includeDeclaration': v:false})<CR>
-nnoremap <silent> <Leader>rf <cmd>lua vim.lsp.buf.references()<CR>
-
-" nnoremap <buffer> <silent> <Leader>rh :call LanguageClient#textDocument_documentHighlight()<CR>
-" nnoremap <buffer> <silent> H          :call LanguageClient#textDocument_documentHighlight()<CR>
-nnoremap <silent> <Leader>rh <cmd>lua vim.lsp.buf.document_highlight()<CR>
-nnoremap <silent> H          <cmd>lua vim.lsp.buf.document_highlight()<CR>
-set updatetime=500 " sets CursorHold time, also writes out swap file
-autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()
-autocmd CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()
-autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-" for highlighting to work... https://github.com/neovim/nvim-lspconfig/issues/379
-hi LspReferenceText cterm=bold gui=bold
-hi LspReferenceRead cterm=bold gui=bold
-hi LspReferenceWrite cterm=bold gui=bold
-
-" nnoremap <buffer> <silent> K          :call LanguageClient#textDocument_hover()<CR>
-nnoremap <silent> K          <cmd>lua vim.lsp.buf.hover()<CR>
-
-" LSP config (the mappings used in the default file don't quite work right)
-" nnoremap <silent> gD <cmd>lua vim.lsp.buf.declaration()<CR>
-" nnoremap <silent> gi <cmd>lua vim.lsp.buf.implementation()<CR>
-" nnoremap <silent> <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
-nnoremap <silent> <C-n> <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
-nnoremap <silent> <C-p> <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
-
-" treesitter stuff
-lua <<EOF
+-- treesitter stuff
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
   sync_install = false, -- install languages synchronously (only applied to `ensure_installed`)
@@ -126,6 +122,7 @@ require'nvim-treesitter.configs'.setup {
   incremental_selection = {
     enable = true,
     keymaps = {
+      -- normal mode keymaps
       init_selection = '<CR>',
       scope_incremental = '<CR>',
       node_incremental = '<TAB>',
@@ -134,6 +131,11 @@ require'nvim-treesitter.configs'.setup {
   }
 }
 EOF
+
+" for highlighting to work... https://github.com/neovim/nvim-lspconfig/issues/379
+hi LspReferenceText cterm=bold gui=bold
+hi LspReferenceRead cterm=bold gui=bold
+hi LspReferenceWrite cterm=bold gui=bold
 
 set background=dark
 
@@ -511,3 +513,12 @@ xnoremap <leader>l :Linediff<CR>
 " ===
 " END linediff
 " ===
+
+" abbreviations TODO move to project
+autocmd FileType c,cpp iabbrev <buffer> TO   TIBEX_OK(e)
+autocmd FileType c,cpp iabbrev <buffer> TNO  TIBEX_NOT_OK(e)
+autocmd FileType c,cpp iabbrev <buffer> TA   TIB_ARGS(e)
+autocmd FileType c,cpp iabbrev <buffer> TAI  TIB_ARGS_IGNR_EX(e)
+autocmd FileType c,cpp iabbrev <buffer> TAP  TIB_ARG_PUBLIC(ep)
+autocmd FileType c,cpp iabbrev <buffer> TAD  TIB_ARGS_DECL(e)
+autocmd FileType c,cpp iabbrev <buffer> TADI TIB_ARGS_DECL_IGNR_EX(e)
