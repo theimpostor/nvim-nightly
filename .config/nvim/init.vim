@@ -68,7 +68,6 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<C-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
   buf_set_keymap('n', '<Leader>rw', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   buf_set_keymap('n', '<Leader>rf', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap('n', 'H', '<cmd>lua vim.lsp.buf.document_highlight()<CR>', opts)
   buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
   buf_set_keymap('n', '<C-p>', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', '<C-n>', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
@@ -78,10 +77,20 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('x', '<leader>f', 'gq', opts)
   buf_set_keymap('n', '<Leader>F', 'mfvi}gq`f', opts)
 
-  vim.api.nvim_set_option('updatetime', 1000)
-  vim.api.nvim_command [[autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()]]
-  vim.api.nvim_command [[autocmd CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()]]
-  vim.api.nvim_command [[autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()]]
+  -- https://www.reddit.com/r/neovim/comments/nwjyg3/comment/h1a1794/
+  -- for highlighting to work... https://github.com/neovim/nvim-lspconfig/issues/379
+  if client.supports_method('textDocument/documentHighlight') then
+    buf_set_keymap('n', 'H', '<cmd>lua vim.lsp.buf.document_highlight()<CR>', opts)
+    vim.api.nvim_exec([[
+        hi LspReferenceRead cterm=bold gui=bold ctermbg=red guibg=Purple
+        hi LspReferenceText cterm=bold gui=bold ctermbg=red guibg=Purple
+        hi LspReferenceWrite cterm=bold gui=bold ctermbg=red guibg=Purple
+    ]], false)
+    vim.api.nvim_set_option('updatetime', 1000)
+    vim.api.nvim_command [[autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()]]
+    vim.api.nvim_command [[autocmd CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()]]
+    vim.api.nvim_command [[autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()]]
+  end
 end
 
 -- Add additional capabilities supported by nvim-cmp
@@ -167,11 +176,6 @@ cmp.setup {
   },
 }
 EOF
-
-" for highlighting to work... https://github.com/neovim/nvim-lspconfig/issues/379
-hi LspReferenceText cterm=bold gui=bold
-hi LspReferenceRead cterm=bold gui=bold
-hi LspReferenceWrite cterm=bold gui=bold
 
 set background=dark
 
