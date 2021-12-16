@@ -8,20 +8,20 @@ mkdir -p "$SCRIPT_DIR/.config"
 mkdir -p "$SCRIPT_DIR/.local/share"
 mkdir -p "$SCRIPT_DIR/.local/state"
 mkdir -p "$SCRIPT_DIR/.cache"
-NVIMAPPIMG="$SCRIPT_DIR/nvim.appimage"
-NVIM="$SCRIPT_DIR/nvim"
+NVIMBINARY="$SCRIPT_DIR/bin/.nvim.bin"
+NVIM="$SCRIPT_DIR/bin/nvim"
 
 set -x
 
 case $(uname -s) in
     Darwin)
         curl -fsSL https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz | tar xzf -
-        ln -s nvim-osx64/bin/nvim "$NVIMAPPIMG"
+        ln -s ../nvim-osx64/bin/nvim "$NVIMBINARY"
         ;;
 
     *)
-        curl -fsSLo "$NVIMAPPIMG" https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage
-        chmod u+x "$NVIMAPPIMG"
+        curl -fsSLo "$NVIMBINARY" https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage
+        chmod u+x "$NVIMBINARY"
         ;;
 esac
 
