@@ -11,7 +11,7 @@ set -x
 case $(uname -s) in
     Darwin)
         rm -rf "$SCRIPT_DIR/nvim-osx64"
-        curl -fsSL https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz | tar xzf -
+        curl -fsSL https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz | tar xzfC - "$SCRIPT_DIR"
         ;;
 
     *)
