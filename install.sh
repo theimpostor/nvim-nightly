@@ -11,11 +11,9 @@ mkdir -p "$SCRIPT_DIR/.cache"
 NVIMBINARY="$SCRIPT_DIR/bin/.nvim.bin"
 NVIM="$SCRIPT_DIR/bin/nvim"
 
-set -x
-
 case $(uname -s) in
     Darwin)
-        curl -fsSL https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz | tar xzf -
+        curl -fsSL https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz | tar xzfC - "$SCRIPT_DIR"
         ln -s ../nvim-osx64/bin/nvim "$NVIMBINARY"
         ;;
 

@@ -134,7 +134,7 @@ require'nvim-treesitter.configs'.setup {
     }
 }
 
--- -- Set completeopt to have a better completion experience
+-- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menu,menuone,noselect'
 
 -- nvim-cmp setup
