@@ -83,7 +83,7 @@ end
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 
-local servers = { 'bashls', 'clangd', 'cmake', 'cssls', 'dockerls', 'gopls', 'html', 'jsonls', 'perlls', 'vimls', 'yamlls' }
+local servers = { 'bashls', 'clangd', 'cmake', 'cssls', 'dockerls', 'gopls', 'html', 'jdtls', 'jsonls', 'perlls', 'vimls', 'yamlls' }
 for _, lsp in ipairs(servers) do
     nvim_lsp[lsp].setup {
         on_attach = on_attach,
@@ -92,12 +92,18 @@ for _, lsp in ipairs(servers) do
 end
 nvim_lsp.tsserver.setup{
     on_attach = on_attach,
+    capabilities = capabilities,
     init_options = {
-        capabilities = capabilities,
         preferences = {
             disableSuggestions = true
         }
     }
+}
+
+nvim_lsp.groovyls.setup{
+    on_attach = on_attach,
+    capabilities = capabilities,
+    cmd = { "java", "-jar", "/Users/shoda/.local/groovy-language-server/build/libs/groovy-language-server-all.jar" },
 }
 
 -- lsp use location list instead of quickfix list
