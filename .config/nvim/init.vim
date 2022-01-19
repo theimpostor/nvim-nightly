@@ -35,6 +35,7 @@ nnoremap Y Y
 " full list here: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 lua << EOF
 local nvim_lsp = require('lspconfig')
+local util = require('lspconfig/util')
 
 -- updatetime is milliseconds before cursorhold events fire, and also how often swap file is written
 vim.o.updatetime = 1000
@@ -83,7 +84,7 @@ end
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 
-local servers = { 'bashls', 'clangd', 'cmake', 'cssls', 'dockerls', 'gopls', 'html', 'jdtls', 'jsonls', 'perlls', 'vimls', 'yamlls' }
+local servers = { 'bashls', 'clangd', 'cmake', 'cssls', 'dockerls', 'gopls', 'html', 'jsonls', 'perlls', 'vimls', 'yamlls' }
 for _, lsp in ipairs(servers) do
     nvim_lsp[lsp].setup {
         on_attach = on_attach,
@@ -104,6 +105,20 @@ nvim_lsp.groovyls.setup{
     on_attach = on_attach,
     capabilities = capabilities,
     cmd = { "java", "-jar", "/Users/shoda/.local/groovy-language-server/build/libs/groovy-language-server-all.jar" },
+}
+
+nvim_lsp.jdtls.setup{
+    on_attach = on_attach,
+    capabilities = capabilities,
+    root_dir = util.root_pattern(
+            '.project', -- eclipse
+            'build.xml', -- Ant
+            'pom.xml', -- Maven
+            'settings.gradle', -- Gradle
+            'settings.gradle.kts', -- Gradle
+            'build.gradle',
+            'build.gradle.kts'
+    ) or vim.fn.getcwd()
 }
 
 -- lsp use location list instead of quickfix list
