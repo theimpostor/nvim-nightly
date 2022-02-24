@@ -4,3 +4,4 @@
 .config/github-copilot
 bin/.nvim.bin
 nvim-osx64
+.config/nvim/spell
