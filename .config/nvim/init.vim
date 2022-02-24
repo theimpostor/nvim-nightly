@@ -1,7 +1,7 @@
 call plug#begin(stdpath('data') . '/plugged')
 Plug 'AndrewRadev/linediff.vim'
 Plug 'cespare/vim-toml'
-Plug 'dense-analysis/ale', { 'for': [ 'bash', 'go', 'javascript', 'sh', 'perl', ] }
+Plug 'dense-analysis/ale', { 'for': [ 'bash', 'go', 'javascript', 'sh', 'perl', 'cmake' ] }
 Plug 'editorconfig/editorconfig-vim'
 Plug 'elzr/vim-json'
 Plug 'hrsh7th/cmp-nvim-lsp'
@@ -301,7 +301,9 @@ nnoremap <leader>s :FZF<CR>
 " BEGIN Ack
 " ===
 " Use ag with ack.vim plugin
-if executable('rg')
+if executable('ackprg')
+    let g:ackprg = 'ackprg'
+elseif executable('rg')
     let g:ackprg = 'rg --vimgrep --sort path'
 elseif executable('ag')
     let g:ackprg = 'ag --vimgrep'
@@ -340,6 +342,7 @@ let g:airline_powerline_fonts = 1
 " set c/cpp linters, disable ale for Java
 let g:ale_linters = {
             \ 'bash': ['shellcheck'],
+            \ 'cmake': ['cmakelint'],
             \ 'go': ['govet'],
             \ 'javascript': ['standard'],
             \ 'sh': ['shellcheck'],
@@ -359,7 +362,8 @@ let g:ale_set_quickfix = 1
 let g:ale_linters_explicit = 1
 
 " enable go format on save
-autocmd FileType go,javascript let b:ale_fix_on_save = 1
+" autocmd FileType go,javascript let b:ale_fix_on_save = 1
+autocmd FileType javascript let b:ale_fix_on_save = 1
 
 " nnoremap <leader>f :ALEFix<CR>
 " ===
