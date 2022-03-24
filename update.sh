@@ -13,7 +13,6 @@ case $(uname -s) in
         NVIMDIR_ASIDE="$SCRIPT_DIR/nvim-osx64.$RANDOM"
         mv "$SCRIPT_DIR/nvim-osx64" "$NVIMDIR_ASIDE"
         curl -fsSL https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz | tar xzfC - "$SCRIPT_DIR"
-        # curl -fsSL https://github.com/neovim/neovim/releases/download/v0.6.1/nvim-macos.tar.gz | tar xzfC - "$SCRIPT_DIR"
         rm -rf "$NVIMDIR_ASIDE"
         ;;
 
@@ -23,4 +22,4 @@ case $(uname -s) in
         ;;
 esac
 
-"$NVIM" +PlugUpgrade +qa && "$NVIM" +PlugUpdate
+"$NVIM" --headless +PlugUpgrade +qa && "$NVIM" --headless +PlugUpdate +PlugDiff +qa

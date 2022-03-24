@@ -24,4 +24,4 @@ esac
 
 # install vim  plug
 curl -fsSLo "$SCRIPT_DIR/.local/share/nvim/site/autoload/plug.vim" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-"$NVIM" +PlugInstall
+"$NVIM" --headless +PlugInstall +qa
