@@ -84,13 +84,27 @@ end
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 
-local servers = { 'bashls', 'clangd', 'cmake', 'cssls', 'dockerls', 'gopls', 'html', 'jsonls', 'perlls', 'vimls', 'yamlls' }
+local servers = { 'bashls', 'clangd', 'cmake', 'cssls', 'dockerls', 'html', 'jsonls', 'perlls', 'vimls', 'yamlls' }
 for _, lsp in ipairs(servers) do
     nvim_lsp[lsp].setup {
         on_attach = on_attach,
         capabilities = capabilities,
     }
 end
+nvim_lsp.gopls.setup{
+    on_attach = on_attach,
+    capabilities = capabilities,
+    settings = {
+        gopls = {
+            analyses = {
+                shadow = true,
+--                unusedparams = true,
+            },
+--            staticcheck = true,
+        }
+    }
+}
+
 nvim_lsp.tsserver.setup{
     on_attach = on_attach,
     capabilities = capabilities,
@@ -136,7 +150,7 @@ require'nvim-treesitter.configs'.setup {
     -- ignore_install = { "javascript" }, -- List of parsers to ignore installing
     highlight = {
         enable = true,              -- false will disable the whole extension
-        -- disable = { "c", "rust" },  -- list of language that will be disabled
+        disable = { "bash" },  -- list of language that will be disabled
         -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
         -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
         -- Using this option may slow down your editor, and you may see some duplicate highlights.
