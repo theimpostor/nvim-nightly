@@ -22,4 +22,4 @@ case $(uname -s) in
         ;;
 esac
 
-"$NVIM" --headless +PlugUpgrade +qa && "$NVIM" --headless +PlugUpdate +PlugDiff +qa
+"$NVIM" --headless +PlugUpgrade +qa && "$NVIM" +PlugUpdate +PlugDiff
