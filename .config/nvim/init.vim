@@ -288,6 +288,10 @@ autocmd FileType c,cpp iabbrev <buffer> TAP  TIB_ARG_PUBLIC(ep)
 autocmd FileType c,cpp iabbrev <buffer> TAD  TIB_ARGS_DECL(e)
 autocmd FileType c,cpp iabbrev <buffer> TADI TIB_ARGS_DECL_IGNR_EX(e)
 
+" templates
+" https://vimtricks.com/p/automated-file-templates/
+autocmd BufNewFile *.sh 0r !curl -fsSL https://raw.githubusercontent.com/theimpostor/templates/main/bash/template.sh
+
 " ===
 " BEGIN oscyank
 " ===
@@ -376,8 +380,8 @@ let g:ale_set_quickfix = 1
 let g:ale_linters_explicit = 1
 
 " enable go format on save
-" autocmd FileType go,javascript let b:ale_fix_on_save = 1
-autocmd FileType javascript let b:ale_fix_on_save = 1
+autocmd FileType go,javascript let b:ale_fix_on_save = 1
+" autocmd FileType javascript let b:ale_fix_on_save = 1
 
 " nnoremap <leader>f :ALEFix<CR>
 " ===
