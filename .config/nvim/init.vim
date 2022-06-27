@@ -150,7 +150,7 @@ require'nvim-treesitter.configs'.setup {
     -- ignore_install = { "javascript" }, -- List of parsers to ignore installing
     highlight = {
         enable = true,              -- false will disable the whole extension
-        disable = { "bash" },  -- list of language that will be disabled
+        disable = { "bash", "make" },  -- list of language that will be disabled
         -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
         -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
         -- Using this option may slow down your editor, and you may see some duplicate highlights.
@@ -291,6 +291,7 @@ autocmd FileType c,cpp iabbrev <buffer> TADI TIB_ARGS_DECL_IGNR_EX(e)
 " templates
 " https://vimtricks.com/p/automated-file-templates/
 autocmd BufNewFile *.sh 0r !curl -fsSL https://raw.githubusercontent.com/theimpostor/templates/main/bash/template.sh
+autocmd BufNewFile main.c 0r !curl -fsSL https://raw.githubusercontent.com/theimpostor/templates/main/c/main.c
 
 " ===
 " BEGIN oscyank
