@@ -3,5 +3,5 @@
 .config/configstore/update-notifier-npm.json
 .config/github-copilot
 bin/.nvim.bin
-nvim-osx64
+nvim-macos
 .config/nvim/spell

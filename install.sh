@@ -14,7 +14,7 @@ NVIM="$SCRIPT_DIR/bin/nvim"
 case $(uname -s) in
     Darwin)
         curl -fsSL https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz | tar xzfC - "$SCRIPT_DIR"
-        ln -s ../nvim-osx64/bin/nvim "$NVIMBINARY"
+        ln -s ../nvim-macos/bin/nvim "$NVIMBINARY"
         ;;
 
     *)
