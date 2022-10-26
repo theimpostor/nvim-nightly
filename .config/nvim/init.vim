@@ -1,7 +1,7 @@
 call plug#begin(stdpath('data') . '/plugged')
 Plug 'AndrewRadev/linediff.vim'
 Plug 'cespare/vim-toml'
-Plug 'dense-analysis/ale', { 'for': [ 'bash', 'go', 'javascript', 'sh', 'perl', 'cmake' ] }
+Plug 'dense-analysis/ale', { 'for': [ 'bash', 'go', 'javascript', 'sh', 'perl', 'cmake', 'dockerfile' ] }
 Plug 'editorconfig/editorconfig-vim'
 Plug 'elzr/vim-json'
 Plug 'hrsh7th/cmp-nvim-lsp'
@@ -81,8 +81,7 @@ local on_attach = function(client, bufnr)
 end
 
 -- Add additional capabilities supported by nvim-cmp
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
+capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 local servers = { 'bashls', 'clangd', 'cmake', 'cssls', 'dockerls', 'html', 'jsonls', 'perlls', 'vimls', 'yamlls' }
 for _, lsp in ipairs(servers) do
@@ -150,7 +149,7 @@ require'nvim-treesitter.configs'.setup {
     -- ignore_install = { "javascript" }, -- List of parsers to ignore installing
     highlight = {
         enable = true,              -- false will disable the whole extension
-        disable = { "bash", "make" },  -- list of language that will be disabled
+        disable = { "bash", "make", "diff" },  -- list of language that will be disabled
         -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
         -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
         -- Using this option may slow down your editor, and you may see some duplicate highlights.
@@ -292,6 +291,7 @@ autocmd FileType c,cpp iabbrev <buffer> TADI TIB_ARGS_DECL_IGNR_EX(e)
 " https://vimtricks.com/p/automated-file-templates/
 autocmd BufNewFile *.sh 0r !curl -fsSL https://raw.githubusercontent.com/theimpostor/templates/main/bash/template.sh
 autocmd BufNewFile main.c 0r !curl -fsSL https://raw.githubusercontent.com/theimpostor/templates/main/c/main.c
+autocmd BufNewFile main.go 0r !curl -fsSL https://raw.githubusercontent.com/theimpostor/templates/main/go/main.go
 
 " ===
 " BEGIN oscyank
@@ -362,6 +362,7 @@ let g:airline_powerline_fonts = 1
 let g:ale_linters = {
             \ 'bash': ['shellcheck'],
             \ 'cmake': ['cmakelint'],
+            \ 'dockerfile': ['hadolint'],
             \ 'go': ['govet'],
             \ 'javascript': ['standard'],
             \ 'sh': ['shellcheck'],
