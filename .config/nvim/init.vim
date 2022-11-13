@@ -4,7 +4,7 @@ Plug 'cespare/vim-toml'
 Plug 'dense-analysis/ale', { 'for': [ 'bash', 'go', 'javascript', 'sh', 'perl', ] }
 Plug 'editorconfig/editorconfig-vim'
 Plug 'elzr/vim-json'
-Plug 'github/copilot.vim'
+" Plug 'github/copilot.vim'
 Plug 'inkarkat/vim-ingo-library'
 Plug 'inkarkat/vim-mark'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -207,6 +207,12 @@ autocmd FileType c,cpp setlocal commentstring=//\ %s
 
 
 nnoremap <leader>s :FZF<CR>
+
+" templates
+" https://vimtricks.com/p/automated-file-templates/
+autocmd BufNewFile *.sh 0r !curl -fsSL https://raw.githubusercontent.com/theimpostor/templates/main/bash/template.sh
+autocmd BufNewFile main.c 0r !curl -fsSL https://raw.githubusercontent.com/theimpostor/templates/main/c/main.c
+autocmd BufNewFile main.go 0r !curl -fsSL https://raw.githubusercontent.com/theimpostor/templates/main/go/main.go
 
 " ===
 " BEGIN oscyank
