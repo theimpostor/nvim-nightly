@@ -14,7 +14,8 @@ Plug 'majutsushi/tagbar'
 Plug 'mileszs/ack.vim'
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'ojroques/vim-oscyank' " OSC52 (hterm/chromeOS) yank to clipboard support
+" Plug 'ojroques/vim-oscyank' " OSC52 (hterm/chromeOS) yank to clipboard support
+Plug 'ojroques/nvim-osc52' " OSC52 (hterm/chromeOS) yank to clipboard support
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-repeat'
@@ -296,12 +297,18 @@ autocmd BufNewFile main.go 0r !curl -fsSL https://raw.githubusercontent.com/thei
 " ===
 " BEGIN oscyank
 " ===
-vnoremap <leader>c :OSCYank<CR>
 
-" You can also use the OSCYank operator:
-" like so for instance:
-" <leader>oip  " copy the inner paragraph
-nmap <leader>o <Plug>OSCYank
+lua << EOF
+vim.keymap.set('n', '<leader>c', require('osc52').copy_operator, {expr = true})
+vim.keymap.set('n', '<leader>cc', '<leader>c_', {remap = true})
+vim.keymap.set('x', '<leader>c', require('osc52').copy_visual)
+EOF
+" vnoremap <leader>c :OSCYank<CR>
+
+" " You can also use the OSCYank operator:
+" " like so for instance:
+" " <leader>oip  " copy the inner paragraph
+" nmap <leader>o <Plug>OSCYank
 " ===
 " END oscyank
 " ===
