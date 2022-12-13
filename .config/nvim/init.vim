@@ -35,6 +35,8 @@ nnoremap Y Y
 " neovim lsp config
 " full list here: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 lua << EOF
+-- vim.lsp.set_log_level("debug")
+
 local nvim_lsp = require('lspconfig')
 local util = require('lspconfig/util')
 
