@@ -1,7 +1,7 @@
 call plug#begin(stdpath('data') . '/plugged')
 Plug 'AndrewRadev/linediff.vim'
 Plug 'cespare/vim-toml'
-Plug 'dense-analysis/ale', { 'for': [ 'bash', 'go', 'javascript', 'sh', 'perl', ] }
+Plug 'dense-analysis/ale', { 'for': [ 'bash', 'go', 'html', 'css', 'javascript', 'sh', 'perl', ] }
 Plug 'editorconfig/editorconfig-vim'
 Plug 'elzr/vim-json'
 " Plug 'github/copilot.vim'
@@ -76,7 +76,7 @@ local on_attach = function(client, bufnr)
     end
 end
 
-local servers = { 'bashls', 'clangd', 'cmake', 'cssls', 'dockerls', 'gopls', 'html', 'jsonls', 'perlls', 'vimls', 'yamlls' }
+local servers = { 'bashls', 'clangd', 'cmake', 'cssls', 'dockerls', 'gopls', 'html', 'jsonls', 'perlls', 'vimls', 'yamlls', 'rust_analyzer' }
 for _, lsp in ipairs(servers) do
     nvim_lsp[lsp].setup {
         on_attach = on_attach,
@@ -272,14 +272,18 @@ let g:airline_powerline_fonts = 1
 let g:ale_linters = {
             \ 'bash': ['shellcheck'],
             \ 'go': ['govet'],
-            \ 'javascript': ['standard'],
+            \ 'html': ['prettier'],
+            \ 'css': ['prettier'],
+            \ 'javascript': ['prettier'],
             \ 'sh': ['shellcheck'],
             \ 'perl': ['perl']
             \ }
 
 let g:ale_fixers = {
             \ 'go': ['gofmt'],
-            \ 'javascript': ['standard'],
+            \ 'html': ['prettier'],
+            \ 'css': ['prettier'],
+            \ 'javascript': ['prettier'],
             \ }
 
 " put ale in the quickfix
@@ -290,7 +294,7 @@ let g:ale_set_quickfix = 1
 let g:ale_linters_explicit = 1
 
 " enable go format on save
-autocmd FileType go,javascript let b:ale_fix_on_save = 1
+autocmd FileType go,javascript,html,css let b:ale_fix_on_save = 1
 
 " nnoremap <leader>f :ALEFix<CR>
 " ===
