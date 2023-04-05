@@ -12,7 +12,7 @@ Plug 'majutsushi/tagbar'
 Plug 'mileszs/ack.vim'
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'ojroques/vim-oscyank' " OSC52 (hterm/chromeOS) yank to clipboard support
+Plug 'ojroques/nvim-osc52' " OSC52 (hterm/chromeOS) yank to clipboard support
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-repeat'
@@ -82,6 +82,18 @@ for _, lsp in ipairs(servers) do
         on_attach = on_attach,
     }
 end
+nvim_lsp.gopls.setup{
+    on_attach = on_attach,
+    settings = {
+        gopls = {
+            env = {
+                GOOS = "js",
+                GOARCH = "wasm"
+            }
+        }
+    }
+}
+
 nvim_lsp.tsserver.setup{
     on_attach = on_attach,
     init_options = {
@@ -106,7 +118,7 @@ require'nvim-treesitter.configs'.setup {
     -- ignore_install = { "javascript" }, -- List of parsers to ignore installing
     highlight = {
         enable = true,              -- false will disable the whole extension
-        -- disable = { "c", "rust" },  -- list of language that will be disabled
+        disable = { "bash" },  -- list of language that will be disabled
         -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
         -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
         -- Using this option may slow down your editor, and you may see some duplicate highlights.
@@ -217,12 +229,11 @@ autocmd BufNewFile main.go 0r !curl -fsSL https://raw.githubusercontent.com/thei
 " ===
 " BEGIN oscyank
 " ===
-vnoremap <leader>c :OSCYank<CR>
-
-" You can also use the OSCYank operator:
-" like so for instance:
-" <leader>oip  " copy the inner paragraph
-nmap <leader>o <Plug>OSCYank
+lua << EOF
+vim.keymap.set('n', '<leader>c', require('osc52').copy_operator, {expr = true})
+vim.keymap.set('n', '<leader>cc', '<leader>c_', {remap = true})
+vim.keymap.set('v', '<leader>c', require('osc52').copy_visual)
+EOF
 " ===
 " END oscyank
 " ===
