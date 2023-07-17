@@ -1,10 +1,11 @@
 call plug#begin(stdpath('data') . '/plugged')
 Plug 'AndrewRadev/linediff.vim'
 Plug 'cespare/vim-toml'
-Plug 'dense-analysis/ale', { 'for': [ 'bash', 'go', 'html', 'css', 'javascript', 'sh', 'perl', ] }
+Plug 'dense-analysis/ale', { 'for': [ 'bash', 'go', 'html', 'css', 'javascript', 'sh', 'perl', 'dockerfile' ] }
 Plug 'editorconfig/editorconfig-vim'
 Plug 'elzr/vim-json'
-" Plug 'github/copilot.vim'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/nvim-cmp'
 Plug 'inkarkat/vim-ingo-library'
 Plug 'inkarkat/vim-mark'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -18,6 +19,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
+Plug 'tzachar/cmp-tabnine', { 'do': './install.sh' }
 Plug 'vim-airline/vim-airline'
 call plug#end()
 
@@ -32,6 +34,7 @@ nnoremap Y Y
 " full list here: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 lua << EOF
 local nvim_lsp = require('lspconfig')
+local util = require('lspconfig/util')
 
 -- updatetime is milliseconds before cursorhold events fire, and also how often swap file is written
 vim.o.updatetime = 1000
@@ -76,26 +79,31 @@ local on_attach = function(client, bufnr)
     end
 end
 
-local servers = { 'bashls', 'clangd', 'cmake', 'cssls', 'dockerls', 'gopls', 'html', 'jsonls', 'perlls', 'vimls', 'yamlls', 'rust_analyzer' }
+-- Add additional capabilities supported by nvim-cmp
+capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+local servers = { 'bashls', 'clangd', 'cmake', 'cssls', 'dockerls', 'html', 'jsonls', 'perlls', 'vimls', 'yamlls', 'rust_analyzer' }
 for _, lsp in ipairs(servers) do
     nvim_lsp[lsp].setup {
         on_attach = on_attach,
+        capabilities = capabilities,
     }
 end
 nvim_lsp.gopls.setup{
     on_attach = on_attach,
     settings = {
-        gopls = {
-            env = {
-                GOOS = "js",
-                GOARCH = "wasm"
-            }
-        }
+--        gopls = {
+--            env = {
+--                GOOS = "js",
+--                GOARCH = "wasm"
+--            }
+--        }
     }
 }
 
 nvim_lsp.tsserver.setup{
     on_attach = on_attach,
+    capabilities = capabilities,
     init_options = {
         preferences = {
             disableSuggestions = true
@@ -137,6 +145,34 @@ require'nvim-treesitter.configs'.setup {
     }
 }
 
+-- Set completeopt to have a better completion experience
+vim.o.completeopt = 'menu,menuone,noselect'
+
+-- nvim-cmp setup
+local cmp = require 'cmp'
+cmp.setup {
+    mapping = {
+        ['<C-Space>'] = cmp.mapping.complete(),
+        ['<Tab>'] = function(fallback)
+            if cmp.visible() then
+                cmp.select_next_item()
+            else
+                fallback()
+            end
+        end,
+        ['<S-Tab>'] = function(fallback)
+            if cmp.visible() then
+                cmp.select_prev_item()
+            else
+                fallback()
+            end
+        end,
+    },
+    sources = {
+        { name = 'cmp_tabnine' },
+        { name = 'nvim_lsp' },
+    },
+}
 EOF
 
 set background=dark
@@ -218,26 +254,31 @@ noremap <Leader>u :call GenerateUUID()<CR>
 autocmd FileType c,cpp setlocal commentstring=//\ %s
 
 
-nnoremap <leader>s :FZF<CR>
-
 " templates
 " https://vimtricks.com/p/automated-file-templates/
 autocmd BufNewFile *.sh 0r !curl -fsSL https://raw.githubusercontent.com/theimpostor/templates/main/bash/template.sh
 autocmd BufNewFile main.c 0r !curl -fsSL https://raw.githubusercontent.com/theimpostor/templates/main/c/main.c
 autocmd BufNewFile main.go 0r !curl -fsSL https://raw.githubusercontent.com/theimpostor/templates/main/go/main.go
 
+" set textwidth to 80 for markdown
+" https://thoughtbot.com/blog/wrap-existing-text-at-80-characters-in-vim
+autocmd BufRead,BufNewFile *.md setlocal textwidth=80
+
 " ===
 " BEGIN oscyank
 " ===
+
 lua << EOF
 vim.keymap.set('n', '<leader>c', require('osc52').copy_operator, {expr = true})
 vim.keymap.set('n', '<leader>cc', '<leader>c_', {remap = true})
-vim.keymap.set('v', '<leader>c', require('osc52').copy_visual)
+vim.keymap.set('x', '<leader>c', require('osc52').copy_visual)
 EOF
 " ===
 " END oscyank
 " ===
 
+
+nnoremap <leader>s :FZF<CR>
 
 " ===
 " BEGIN Ack
