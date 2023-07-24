@@ -12,12 +12,12 @@ case $(uname -s) in
     Darwin)
         NVIMDIR_ASIDE="$SCRIPT_DIR/nvim-osx64.$RANDOM"
         mv "$SCRIPT_DIR/nvim-osx64" "$NVIMDIR_ASIDE"
-        curl -fsSL https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz | tar xzfC - "$SCRIPT_DIR"
+        curl -fsSL https://github.com/neovim/neovim/releases/download/stable/nvim-macos.tar.gz | tar xzfC - "$SCRIPT_DIR"
         rm -rf "$NVIMDIR_ASIDE"
         ;;
 
     *)
-        curl -fsSLo "$NVIMBINARY" https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage
+        curl -fsSLo "$NVIMBINARY" https://github.com/neovim/neovim/releases/download/stable/nvim.appimage
         chmod u+x "$NVIMBINARY"
         ;;
 esac
