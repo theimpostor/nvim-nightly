@@ -9,7 +9,7 @@ Plug 'hrsh7th/nvim-cmp'
 Plug 'inkarkat/vim-ingo-library'
 Plug 'inkarkat/vim-mark'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'majutsushi/tagbar'
+Plug 'preservim/tagbar'
 Plug 'mileszs/ack.vim'
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
@@ -91,13 +91,19 @@ for _, lsp in ipairs(servers) do
 end
 nvim_lsp.gopls.setup{
     on_attach = on_attach,
+    capabilities = capabilities,
     settings = {
---        gopls = {
+        gopls = {
+            analyses = {
+                shadow = true,
+--                unusedparams = true,
+            },
+            staticcheck = true,
 --            env = {
 --                GOOS = "js",
 --                GOARCH = "wasm"
 --            }
---        }
+        }
     }
 }
 
